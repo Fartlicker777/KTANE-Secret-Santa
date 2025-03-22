@@ -119,7 +119,7 @@ public class SecretSanta : MonoBehaviour {
 
     void Update () {
         IsRot = GetRotate.GetIsRot();
-        if (Selected && IsRot && !IsPlaying) {
+        if (Selected && IsRot && !IsPlaying && !ModuleSolved) {
             StartCoroutine(PlayGiftSound());
         }
     }
