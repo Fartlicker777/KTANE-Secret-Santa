@@ -395,23 +395,14 @@ public class SecretSanta : MonoBehaviour {
         bool CeilOrFloor = Rnd.Range(0, 2) == 0; //Chooses between top two or bottom two
 
         Debug.LogFormat("[Secret Santa #{0}] The correct value is {1}.", ModuleId, CeilOrFloor ? "above the ceiling price" : "beneath the floor price");
-    retryGen:
+        var validCeilFloor = Enumerable.Range(10, 90).Where(a => (a > GiftPrices[0] && a <= GiftPrices[1]) || (a >= GiftPrices[4] && a < GiftPrices[5]));
+        Debug.LogFormat("<Secret Santa #{0}> Potential solution prices = {1}", ModuleId, validCeilFloor.Join(", "));
         var targetPrice = CeilOrFloor ? Rnd.Range(GiftPrices[4] + 1, GiftPrices[5]) : Rnd.Range(GiftPrices[0] + 1, GiftPrices[1]);
-        // Ceil: 2nd highest to highest calculated. Else: Lowest to 2nd lowest.
-        do
-            FinalPrices = Enumerable.Range(10, 90).Where(a => !GiftPrices.Contains(a)).ToArray().Shuffle().Take(6).ToArray();
-        while ((FinalPrices.Min() > GiftPrices[0] && FinalPrices.Min() < GiftPrices[1]) || (FinalPrices.Max() > GiftPrices[4] && FinalPrices.Max() < GiftPrices[5]));
-        /*for (int i = 0; i < 5; i++) {
-            int temp = 0;
-            do {
-            temp = Rnd.Range(10, 100);
-            } while (GiftPrices.Contains(temp) || (temp > GiftPrices[0] && temp < GiftPrices[1]) || (temp > GiftPrices[4] && temp < GiftPrices[5]) || FinalPrices.Contains(temp));
-            FinalPrices[i] = temp;
-        }
-        */
+        // Prevent all occurances of prices being the gift prices calculated, and any potential valid ceil/floor prices.
+        FinalPrices = Enumerable.Range(10, 90).Where(a => !(validCeilFloor.Contains(a) || GiftPrices.Contains(a))).ToArray().Shuffle().Take(6).ToArray();
         BubbleSort(FinalPrices);
-        if (FinalPrices.Count(a => CeilOrFloor ? a > targetPrice : a < targetPrice) != 1)
-            goto retryGen;
+        /*if (FinalPrices.Count(a => CeilOrFloor ? a > targetPrice : a < targetPrice) != 1)
+            goto retryGen;*/
         if (!CeilOrFloor)
             FinalPrices = FinalPrices.Reverse().ToArray();
         FinalPrices[5] = targetPrice;
