@@ -4,7 +4,7 @@ using UnityEngine;
 public class IsRotating : MonoBehaviour {
 
    public KMSelectable Mod;
-   static bool IsRot = false;
+   bool IsRot = false;
 
    void Awake () {
       StartCoroutine(UpdateRotating());
